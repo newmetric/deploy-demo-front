@@ -1,0 +1,27 @@
+{
+  "name": "demo-front",
+  "version": "1.0.0",
+  "description": "A Next.js application for deploying projects with GitHub integration.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:init": "dotenv -e .env.local -- psql -f init.sql"
+  },
+  "dependencies": {
+    "next": "latest",
+    "pg": "^8.16.3",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/pg": "^8.15.5",
+    "@types/react": "latest",
+    "dotenv-cli": "^10.0.0",
+    "typescript": "latest"
+  },
+  "license": "MIT"
+}
