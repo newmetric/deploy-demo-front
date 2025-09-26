@@ -16,6 +16,8 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
+const demoBackendUrl = process.env.DEMO_BACKEND_URL || 'http://localhost:8080';
+
 
 export default async function handler(
   req: NextApiRequest,
@@ -49,12 +51,43 @@ export default async function handler(
     }
 
     try {
+      const runInsertQuery = function() {
+        return new Promise(async (resolve, reject) => {
+          const { rows } = await pool.query(
+            'INSERT INTO projects (user_id, repo_url, status) VALUES ($1, $2, $3) RETURNING *',
+              [userId, repoUrl, 'queued'] // 초기 상태를 'queued'로 설정
+          );
+          resolve(rows[0]);
+        });
+      };
+
+      const postCreateContainerCall = function() {
+        return new Promise(async (resolve, reject) => {
+          const response = await fetch(`${demoBackendUrl}/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ user_id: userId, repo_url: repoUrl }),
+          });
+
+          if (!response.ok) {
+            return reject(new Error(`Demo backend error: ${response.statusText}`));
+          }
+
+          const data = await response.json();
+          resolve(data);
+        });
+      }
+
+      const [_, rows] = await Promise.all([
+        postCreateContainerCall(),
+        runInsertQuery()
+      ]);
+
       // 'projects' 테이블에 새로운 레코드를 삽입합니다.
-      const { rows } = await pool.query(
-        'INSERT INTO projects (user_id, repo_url, status) VALUES ($1, $2, $3) RETURNING *',
-        [userId, repoUrl, 'queued'] // 초기 상태를 'queued'로 설정
-      );
-      return res.status(201).json(rows[0]);
+      
+      return res.status(201).json(rows);
     } catch (error) {
       console.error('Database Error:', error);
       return res.status(500).json({ message: 'Internal Server Error' });
