@@ -31,18 +31,18 @@ const MainPage = () => {
     const repo = match[2];
 
     try {
-      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+    //   const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
       
-      if (response.status === 404) {
-        alert('Repository not found. Please check if the repository is public.');
-        return;
-      }
+    //   if (response.status === 404) {
+    //     alert('Repository not found. Please check if the repository is public.');
+    //     return;
+    //   }
 
-      if (!response.ok) {
-        throw new Error(`GitHub API error: ${response.statusText}`);
-      }
+    //   if (!response.ok) {
+    //     throw new Error(`GitHub API error: ${response.statusText}`);
+    //   }
 
-      const repoData = await response.json();
+    //   const repoData = await response.json();
 
     //   if (repoData.private) {
     //     alert('Only public repositories can be deployed.');
