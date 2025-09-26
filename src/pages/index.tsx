@@ -44,10 +44,10 @@ const MainPage = () => {
 
       const repoData = await response.json();
 
-      if (repoData.private) {
-        alert('Only public repositories can be deployed.');
-        return;
-      }
+    //   if (repoData.private) {
+    //     alert('Only public repositories can be deployed.');
+    //     return;
+    //   }
 
       const response2 = await fetch('/api/deployment', {
         method: 'POST',

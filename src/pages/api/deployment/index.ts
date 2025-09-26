@@ -54,40 +54,38 @@ export default async function handler(
       const runInsertQuery = function() {
         return new Promise(async (resolve, reject) => {
           const { rows } = await pool.query(
-            'INSERT INTO projects (user_id, repo_url, status) VALUES ($1, $2, $3) RETURNING *',
+            'INSERT INTO projects (user_id, repo_url, status) VALUES ($1, $2, $3) RETURNING id',
               [userId, repoUrl, 'queued'] // 초기 상태를 'queued'로 설정
           );
           resolve(rows[0]);
         });
       };
 
-      const postCreateContainerCall = function() {
+      const postCreateContainerCall = function(app_id: string) {
         return new Promise(async (resolve, reject) => {
+          console.log("fajsudfadsf");
+          console.log(JSON.stringify({ user_id: userId, repo_url: repoUrl, app_id: app_id }));
           const response = await fetch(`${demoBackendUrl}/`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ user_id: userId, repo_url: repoUrl }),
+            body: JSON.stringify({ user_id: userId, repo_url: repoUrl, app_id: app_id }),
           });
 
           if (!response.ok) {
             return reject(new Error(`Demo backend error: ${response.statusText}`));
           }
 
-          const data = await response.json();
+          const data = await response.text();
           resolve(data);
         });
       }
+      let row = await runInsertQuery();
 
-      const [_, rows] = await Promise.all([
-        postCreateContainerCall(),
-        runInsertQuery()
-      ]);
+      await postCreateContainerCall(String(row.id));
 
-      // 'projects' 테이블에 새로운 레코드를 삽입합니다.
-      
-      return res.status(201).json(rows);
+      return res.status(201).json(row.id);
     } catch (error) {
       console.error('Database Error:', error);
       return res.status(500).json({ message: 'Internal Server Error' });
