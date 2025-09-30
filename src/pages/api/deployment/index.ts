@@ -92,7 +92,19 @@ export default async function handler(
     }
   }
 
+  // DELETE: 프로젝트 table truncate
+  if (req.method === 'DELETE') {
+    try {
+      //await pool.query('TRUNCATE TABLE projects RESTART IDENTITY CASCADE');
+      await pool.query('TRUNCATE TABLE projects');
+      return res.status(204).end();
+    } catch (error) {
+      console.error('Database Error:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
+
   // 허용되지 않은 메소드 처리
-  res.setHeader('Allow', ['GET', 'POST']);
+  res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
   res.status(405).end(`Method ${req.method} Not Allowed`);
 }

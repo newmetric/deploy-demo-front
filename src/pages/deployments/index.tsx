@@ -36,6 +36,31 @@ const DeploymentsPage = () => {
     fetchProjects();
   }, []);
 
+  const handleDeleteAll = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert('User not logged in');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/deployment?userId=${userId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete projects');
+      }
+
+      // 삭제 후 프로젝트 목록을 비웁니다.
+      setProjects([]);
+      alert('All deployments deleted successfully');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -52,6 +77,9 @@ const DeploymentsPage = () => {
           </li>
         ))}
       </ul>
+      <form onSubmit={handleDeleteAll}>
+        <button type="submit">Delete All Deployments</button>
+      </form>
     </div>
   );
 };
