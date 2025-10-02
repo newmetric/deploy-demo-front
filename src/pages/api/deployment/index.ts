@@ -63,7 +63,6 @@ export default async function handler(
 
       const postCreateContainerCall = function(app_id: string) {
         return new Promise(async (resolve, reject) => {
-          console.log("fajsudfadsf");
           console.log(JSON.stringify({ user_id: userId, repo_url: repoUrl, app_id: app_id }));
           const response = await fetch(`${demoBackendUrl}/`, {
             method: 'POST',
