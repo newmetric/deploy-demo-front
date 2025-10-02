@@ -71,7 +71,7 @@ const DeploymentsPage = () => {
       <ul>
         {projects.map((project) => (
           <li key={project.id}>
-            <Link href={`/deployments/${project.id}`}>
+            <Link href={`https://l2-demo-${project.id}.think-factory.newmetric.xyz`}>
               {project.repo_url} - <strong>{project.status}</strong>
             </Link>
           </li>
